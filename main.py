@@ -290,6 +290,30 @@ def _split_text_by_markdown_table(text: str) -> list[str]:
     return segments or [text]
 
 
+def _preprocess_markdown_text(text: str) -> str:
+    """
+    修复飞书 (Lark) 不支持的一些 Markdown 语义。
+    
+    Args:
+        text (str): 原始 Markdown 文本。
+        
+    Returns:
+        str: 预处理后的 Markdown 文本。
+    """
+    # 将 HTML 下划线标签 <u>...</u> 替换为飞书支持的删除线/伪下划线格式 ~...~
+    text = re.sub(r"<u>(.*?)</u>", r"~\1~", text, flags=re.DOTALL)
+
+    # 将 Markdown 原生任务列表的未完成状态 `- [ ] ` 替换为飞书可显示的 Emoji "⬜"
+    text = re.sub(r"(?m)^(\s*(?:-|[*]|\+)\s+)\[ \]\s+", r"\1⬜ ", text)
+    # 将 Markdown 原生任务列表的已完成状态 `- [x] ` 替换为飞书可显示的 Emoji "✅"
+    text = re.sub(r"(?m)^(\s*(?:-|[*]|\+)\s+)\[[xX]\]\s+", r"\1✅ ", text)
+    
+    # 修复飞书不支持的带有空格的水平分割线格式 (例如: * * * 或 - - -) 统一替换为 ---
+    text = re.sub(r"(?m)^[ \t]*([*-])[ \t]+\1[ \t]+\1[ \t]*$", r"---", text)
+    
+    return text
+
+
 def _should_split_message_chain(message_chain: MessageChain) -> bool:
     """Only split plain-text message chains that contain a markdown table."""
 
@@ -323,6 +347,12 @@ def _patch_send_message_chain(
         receive_id_type: str | None = None,
     ):
         logger.debug("[send_patch] Intercepted send_message_chain call")
+
+        # Preprocess markdown elements
+        if message_chain.chain:
+            for comp in message_chain.chain:
+                if isinstance(comp, Plain):
+                    comp.text = _preprocess_markdown_text(comp.text)
 
         if not _should_split_message_chain(message_chain):
             logger.debug("[send_patch] No table splitting needed, pass through")
@@ -424,6 +454,11 @@ def _install_patch() -> None:
                 getattr(self, "message_obj", None)
             )
 
+            if isinstance(message, str):
+                from astrbot.api.event import MessageChain
+                from astrbot.api.message_components import Plain
+                message = MessageChain(chain=[Plain(message)])
+
             await LarkMessageEvent.send_message_chain(
                 message,
                 self.bot,
@@ -432,8 +467,6 @@ def _install_patch() -> None:
                 receive_id=derived_receive_id,
                 receive_id_type=derived_receive_type,
             )
-            if _original_send_method is not None:
-                await _original_send_method(self, message)
 
         setattr(LarkMessageEvent, "_markdown_table_send_patch_id", _patch_token)
         LarkMessageEvent.send = _patched_send
