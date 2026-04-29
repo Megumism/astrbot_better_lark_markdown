@@ -1,14 +1,48 @@
-# astrbot-plugin-helloworld
+# astrbot-better-lark-markdown
 
-AstrBot 插件模板 / A template plugin for AstrBot plugin feature
+这是一个面向飞书的增强版 Markdown 解析器，支持更多的 Markdown 语法和功能。
 
-> [!NOTE]
-> This repo is just a template of [AstrBot](https://github.com/AstrBotDevs/AstrBot) Plugin.
-> 
-> [AstrBot](https://github.com/AstrBotDevs/AstrBot) is an agentic assistant for both personal and group conversations. It can be deployed across dozens of mainstream instant messaging platforms, including QQ, Telegram, Feishu, DingTalk, Slack, LINE, Discord, Matrix, etc. In addition, it provides a reliable and extensible conversational AI infrastructure for individuals, developers, and teams. Whether you need a personal AI companion, an intelligent customer support agent, an automation assistant, or an enterprise knowledge base, AstrBot enables you to quickly build AI applications directly within your existing messaging workflows.
+## 飞书可处理的 Markdown 语法列表
 
-# Supports
+- [x] 一级标题
+- [x] 二级标题
+- [x] 三级标题
+- [x] 四级标题
+- [x] 五级标题
+- [x] 六级标题
+- [x] 水平分割线
+- [ ] 段落文本
+- [x] 粗体
+- [x] 斜体
+- [x] 删除线
+- [x] 粗体斜体
+- [ ] 下划线（HTML 扩展）
+- [x] 行内代码
+- [ ] 代码块
+- [x] 指定代码语言的代码块
+- [x] 无序列表
+- [x] 有序列表
+- [x] 嵌套列表（未完全测试）
+- [ ] 任务列表
+- [x] 引用块
+- [x] 嵌套引用
+- [x] 超链接
+- [ ] 图片
+- [ ] 自动链接（未测试）
+- [ ] 表格（仅支持列数<=2的表格）
+- [ ] 表格对齐（未测试）
+- [ ] 转义字符（未测试）
+- [ ] HTML 标签嵌入
+- [ ] 折叠内容（details / summary）
+- [ ] 删除线嵌套样式
+- [ ] 行内公式（视平台支持）
+- [ ] 块级公式（视平台支持）
+- [x] Emoji 表情
+- [ ] 特殊符号
+- [ ] 锚点链接（视平台支持）
+- [ ] 多段落内容
+- [ ] 混合语法排版
 
-- [AstrBot Repo](https://github.com/AstrBotDevs/AstrBot)
-- [AstrBot Plugin Development Docs (Chinese)](https://docs.astrbot.app/dev/star/plugin-new.html)
-- [AstrBot Plugin Development Docs (English)](https://docs.astrbot.app/en/dev/star/plugin-new.html)
+> **不考虑支持的**
+>
+> - [ ] 注脚（视平台支持）
